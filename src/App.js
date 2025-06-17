@@ -19,13 +19,13 @@ function App() {
   return (
     <ThemeProvider>
       <Router>
-        <div className="App">
+        <div className="app">
           <header className="header">
             <div className="container">
               <Navbar />
             </div>
           </header>
-          <main>
+          <main className="main">
             <Routes>
               <Route path="/" element={<Home />} />
               <Route path="/personagens" element={<Personagens />} />
