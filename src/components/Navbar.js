@@ -1,70 +1,119 @@
 import React, { useState, useEffect } from 'react';
+import { Link, useLocation } from 'react-router-dom';
 import { useTheme } from '../context/ThemeContext';
-import { Link } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 
-function Navbar() {
+const Navbar = () => {
+  const { theme, toggleTheme } = useTheme();
+  const { user, logout } = useAuth();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
-  const { isDarkMode, toggleTheme } = useTheme();
+  const location = useLocation();
 
   useEffect(() => {
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 50);
+      setIsScrolled(window.scrollY > 20);
     };
 
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const navLinks = [
-    { path: '/personagens', label: 'Personagens' },
-    { path: '/o-que-aprender', label: 'Aprender' },
-    { path: '/hq', label: 'HQ' },
-    { path: '/contato', label: 'Contato' }
-  ];
+  const isActive = (path) => {
+    return location.pathname === path;
+  };
 
   return (
     <nav className={`nav ${isScrolled ? 'nav-scrolled' : ''}`}>
-      <div className="nav-brand">
-        <img src="/logo.png" alt="Física Divertida" className="nav-logo-img" />
-        <Link to="/" className="nav-logo">
-          Física Divertida
+      <div className="nav-container container">
+        <Link to="/" className="nav-brand">
+          <img src="/logo192.png" alt="Logo" className="nav-logo" />
+          <span>HQ Cinemática</span>
         </Link>
-      </div>
-      
-      <div className={`nav-links ${isMenuOpen ? 'nav-links-open' : ''}`}>
-        {navLinks.map((link) => (
+
+        <button 
+          className="nav-toggle"
+          onClick={() => setIsMenuOpen(!isMenuOpen)}
+          aria-label="Menu"
+        >
+          <span className={`nav-toggle-icon ${isMenuOpen ? 'active' : ''}`}></span>
+        </button>
+
+        <div className={`nav-links ${isMenuOpen ? 'active' : ''}`}>
           <Link 
-            key={link.path} 
-            to={link.path}
-            className="nav-link"
+            to="/" 
+            className={`nav-link ${isActive('/') ? 'active' : ''}`}
             onClick={() => setIsMenuOpen(false)}
           >
-            {link.label}
+            Início
           </Link>
-        ))}
-        <Link to="/cadastro" className="btn btn-primary nav-btn">Cadastro</Link>
-        <Link to="/acesso" className="btn btn-secondary nav-btn">Acesso</Link>
-        <button 
-          onClick={toggleTheme} 
-          className="theme-toggle" 
-          aria-label="Alternar tema"
-        >
-          {isDarkMode ? '☀️' : '🌙'}
-        </button>
-      </div>
+          <Link 
+            to="/personagens" 
+            className={`nav-link ${isActive('/personagens') ? 'active' : ''}`}
+            onClick={() => setIsMenuOpen(false)}
+          >
+            Personagens
+          </Link>
+          <Link 
+            to="/conteudo" 
+            className={`nav-link ${isActive('/conteudo') ? 'active' : ''}`}
+            onClick={() => setIsMenuOpen(false)}
+          >
+            Conteúdo
+          </Link>
+          <Link 
+            to="/contato" 
+            className={`nav-link ${isActive('/contato') ? 'active' : ''}`}
+            onClick={() => setIsMenuOpen(false)}
+          >
+            Contato
+          </Link>
 
-      <button 
-        className={`mobile-menu-button ${isMenuOpen ? 'open' : ''}`}
-        onClick={() => setIsMenuOpen(!isMenuOpen)}
-        aria-label="Menu"
-      >
-        <span></span>
-        <span></span>
-        <span></span>
-      </button>
+          <div className="nav-actions">
+            <button 
+              className="theme-toggle"
+              onClick={toggleTheme}
+              aria-label={theme === 'dark' ? 'Mudar para tema claro' : 'Mudar para tema escuro'}
+            >
+              {theme === 'dark' ? '☀️' : '🌙'}
+            </button>
+
+            {user ? (
+              <div className="nav-user">
+                <span className="nav-user-name">Olá, {user.nome}</span>
+                {user.isAdmin && (
+                  <Link 
+                    to="/admin" 
+                    className={`nav-link ${isActive('/admin') ? 'active' : ''}`}
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    Admin
+                  </Link>
+                )}
+                <button 
+                  className="btn btn-secondary"
+                  onClick={() => {
+                    logout();
+                    setIsMenuOpen(false);
+                  }}
+                >
+                  Sair
+                </button>
+              </div>
+            ) : (
+              <Link 
+                to="/login" 
+                className={`btn btn-primary ${isActive('/login') ? 'active' : ''}`}
+                onClick={() => setIsMenuOpen(false)}
+              >
+                Entrar
+              </Link>
+            )}
+          </div>
+        </div>
+      </div>
     </nav>
   );
-}
+};
 
 export default Navbar; 

@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { getPersonagens } from '../services/api';
-import Loading from '../components/Loading';
-import ErrorMessage from '../components/ErrorMessage';
+import { useTheme } from '../context/ThemeContext';
 
-function Personagens() {
+const Personagens = () => {
   const [personagens, setPersonagens] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const { theme } = useTheme();
 
   useEffect(() => {
     const fetchPersonagens = async () => {
@@ -15,7 +15,7 @@ function Personagens() {
         setPersonagens(data);
         setLoading(false);
       } catch (err) {
-        setError('Erro ao carregar personagens');
+        setError('Erro ao carregar personagens. Por favor, tente novamente mais tarde.');
         setLoading(false);
       }
     };
@@ -24,51 +24,60 @@ function Personagens() {
   }, []);
 
   if (loading) {
-    return <Loading />;
+    return (
+      <div className="loading-container">
+        <div className="loading-spinner"></div>
+        <p className="loading-text">Carregando personagens...</p>
+      </div>
+    );
   }
 
   if (error) {
-    return <ErrorMessage message={error} />;
+    return (
+      <div className="error-container">
+        <div className="error-message">{error}</div>
+      </div>
+    );
   }
 
   return (
-    <div className="max-w-6xl mx-auto p-6">
-      <h1 className="text-3xl font-bold text-blue-600 mb-8 text-center">
-        Nossos Personagens
-      </h1>
+    <div className="personagens-page">
+      <section className="hero">
+        <div className="container">
+          <h1 className="fade-in">Nossos Personagens</h1>
+          <p className="fade-in">
+            Conheça os personagens que vão te guiar nesta jornada de aprendizado
+          </p>
+        </div>
+      </section>
 
-      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-        {personagens.map((personagem) => (
-          <div
-            key={personagem.id}
-            className="bg-white rounded-lg shadow-md overflow-hidden"
-          >
-            <img
-              src={personagem.imagem}
-              alt={personagem.nome}
-              className="w-full h-48 object-cover"
-            />
-            <div className="p-6">
-              <h2 className="text-xl font-semibold text-blue-600 mb-2">
-                {personagem.nome}
-              </h2>
-              <p className="text-gray-600 mb-4">{personagem.descricao}</p>
-              <div className="flex flex-wrap gap-2">
-                {personagem.conceitos.map((conceito, index) => (
-                  <span
-                    key={index}
-                    className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm"
-                  >
-                    {conceito}
-                  </span>
-                ))}
+      <section className="section">
+        <div className="container">
+          <div className="personagens-grid">
+            {personagens.map((personagem) => (
+              <div key={personagem.id} className="personagem-card fade-in">
+                <div className="personagem-avatar">
+                  {personagem.nome === 'Amélia' ? '👩‍🎓' : '👨‍🔬'}
+                </div>
+                <div className="personagem-info">
+                  <h3>{personagem.nome}</h3>
+                  <p>{personagem.descricao}</p>
+                  <div className="personagem-conceitos">
+                    <h4>Conceitos Relacionados:</h4>
+                    <ul>
+                      {personagem.conceitos.map((conceito, index) => (
+                        <li key={index}>{conceito}</li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
               </div>
-            </div>
+            ))}
           </div>
-        ))}
-      </div>
+        </div>
+      </section>
     </div>
   );
-}
+};
 
 export default Personagens; 

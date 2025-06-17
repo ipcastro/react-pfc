@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { mockPersonagens, mockConteudo } from './mockData';
 
 const api = axios.create({
   baseURL: 'http://localhost:3000', // Ajuste para a URL do seu backend
@@ -9,8 +10,8 @@ export const getPersonagens = async () => {
     const response = await api.get('/api/personagens');
     return response.data;
   } catch (error) {
-    console.error('Erro ao buscar personagens:', error);
-    throw error;
+    console.warn('Usando dados mock para personagens');
+    return mockPersonagens;
   }
 };
 
@@ -19,8 +20,8 @@ export const getConteudo = async () => {
     const response = await api.get('/api/conteudo');
     return response.data;
   } catch (error) {
-    console.error('Erro ao buscar conteúdo:', error);
-    throw error;
+    console.warn('Usando dados mock para conteúdo');
+    return mockConteudo;
   }
 };
 
