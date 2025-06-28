@@ -35,7 +35,7 @@ const Personagens = () => {
   if (error) {
     return (
       <div className="error-container">
-        <div className="error-message">{error}</div>
+        <div className="alert alert-error">{error}</div>
       </div>
     );
   }
@@ -57,18 +57,20 @@ const Personagens = () => {
             {personagens.map((personagem) => (
               <div key={personagem.id} className="personagem-card fade-in">
                 <div className="personagem-avatar">
-                  {personagem.nome === 'Amélia' ? '👩‍🎓' : '👨‍🔬'}
+                  <span className="character-emoji">
+                    {personagem.nome === 'Amélia' ? '👩‍🎓' : '👨‍🔬'}
+                  </span>
                 </div>
                 <div className="personagem-info">
                   <h3>{personagem.nome}</h3>
                   <p>{personagem.descricao}</p>
                   <div className="personagem-conceitos">
                     <h4>Conceitos Relacionados:</h4>
-                    <ul>
+                    <div className="conceitos-tags">
                       {personagem.conceitos.map((conceito, index) => (
-                        <li key={index}>{conceito}</li>
+                        <span key={index} className="conceito-tag">{conceito}</span>
                       ))}
-                    </ul>
+                    </div>
                   </div>
                 </div>
               </div>
